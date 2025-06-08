@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>선택 기관 민원 기록</title>
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: #f4f7fc;
+      color: #333;
+      line-height: 1.6;
+      padding: 40px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "민원 접수 시스템";
+      display: block;
+      background-color: #1d428a;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-bottom: 30px;
+      width: 100%;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 50px;
+      text-align: center;
+    }
+
+    table {
+      width: 90%;
+      max-width: 1000px;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      background-color: #fff;
+      border: 1px solid #dcdcdc;
+    }
+
+    th, td {
+      border: 1px solid #dcdcdc;
+      padding: 14px 18px;
+      text-align: center;
+      font-size: 15px;
+    }
+
+    th {
+      background-color: #f5f7fa;
+      font-weight: 600;
+      color: #1d1d1d;
+    }
+
+    button {
+      background-color: #1d428a;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      font-size: 15px;
+      cursor: pointer;
+      margin: 5px;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #0f2a5f;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>선택된 기관 관련 민원 기록</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>번호</th>
+        <th>날짜</th>
+        <th>이름</th>
+        <th>연락처</th>
+        <th>주소</th>
+        <th>내용</th>
+        <th>기관</th>
+      </tr>
+    </thead>
+    <tbody id="filtered-records-body"></tbody>
+  </table>
+
+  <button onclick="goBack()">이전</button>
+</div>
+
+<script>
+const selectedAgencies = JSON.parse(localStorage.getItem("selectedAgencies")) || [];
+const allRecords = JSON.parse(localStorage.getItem("complaints")) || [];
+const tableBody = document.getElementById("filtered-records-body");
+
+const matchedRecords = allRecords.filter(record => {
+  return selectedAgencies.includes(record.department);
+});
+
+if (matchedRecords.length > 0) {
+  tableBody.innerHTML = matchedRecords.map((rec, idx) => `
+    <tr>
+      <td>${idx + 1}</td>
+      <td>${rec.date || "날짜 없음"}</td>
+      <td>${rec.name || "이름 없음"}</td>
+      <td>${rec.phone || "번호 없음"}</td>
+      <td>${rec.address || "주소 없음"}</td>
+      <td>${rec.complaint || "내용 없음"}</td>
+      <td>${rec.department || "기관 없음"}</td>
+    </tr>
+  `).join("");
+} else {
+  tableBody.innerHTML = "<tr><td colspan='7'>선택한 기관 관련 민원이 없습니다.</td></tr>";
+}
+
+function goBack() {
+  window.location.href = "staff.html";
+}
+</script>
+</body>
+</html>

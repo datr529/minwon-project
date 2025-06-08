@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>민원인 정보 기록</title>
+    <style>
+    body {
+        font-family: 'Noto Sans KR', sans-serif;
+        background-color: #f4f7fc;
+        color: #333;
+        line-height: 1.6;
+        padding: 40px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+    }
+
+    body::before {
+        content: "민원 접수 시스템";
+        display: block;
+        background-color: #1d428a;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 30px;
+        width: 100%;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 50px;
+        text-align: center;
+    }
+
+    table {
+        width: 90%;
+        max-width: 1000px;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        background-color: #fff;
+        border: 1px solid #dcdcdc;
+    }
+
+    th, td {
+        border: 1px solid #dcdcdc;
+        padding: 14px 18px;
+        text-align: center;
+        font-size: 15px;
+    }
+
+    th {
+        background-color: #f5f7fa;
+        font-weight: 600;
+        color: #1d1d1d;
+    }
+
+    button {
+        background-color: #1d428a;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        font-size: 15px;
+        cursor: pointer;
+        margin: 5px;
+        transition: background-color 0.2s;
+    }
+
+    button:hover {
+        background-color: #0f2a5f;
+    }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>민원인 정보 기록</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>날짜</th>
+                <th>이름</th>
+                <th>연락처</th>
+                <th>주소</th>
+                <th>삭제</th>
+            </tr>
+        </thead>
+        <tbody id="record-table">
+            <!-- JavaScript에서 기록 추가 -->
+        </tbody>
+    </table>
+
+    <button onclick="goBack()">이전</button>
+</div>
+
+<script>
+function loadComplaintRecords() {
+    let storedRecords = JSON.parse(localStorage.getItem("complaintRecords")) || [];
+    let tableBody = document.getElementById("record-table");
+
+    if (storedRecords.length > 0) {
+        tableBody.innerHTML = storedRecords.map((record, index) => {
+            if (!record.date) {
+                record.date = new Date().toISOString().split('T')[0];
+            }
+            return `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${record.date}</td>
+                    <td>${record.name}</td>
+                    <td>${record.phone}</td>
+                    <td>${record.address}</td>
+                    <td><button type="button" class="delete-button" onclick="deleteRecord(${index})">삭제</button></td>
+                </tr>
+            `;
+        }).join("");
+
+        localStorage.setItem("complaintRecords", JSON.stringify(storedRecords));
+    } else {
+        tableBody.innerHTML = "<tr><td colspan='6'>저장된 민원인 정보가 없습니다.</td></tr>";
+    }
+}
+
+function deleteRecord(index) {
+    let storedRecords = JSON.parse(localStorage.getItem("complaintRecords")) || [];
+    storedRecords.splice(index, 1);
+    localStorage.setItem("complaintRecords", JSON.stringify(storedRecords));
+    loadComplaintRecords();
+}
+
+function goBack() {
+    window.location.href = "staff.html";
+    window.close();
+}
+
+window.onload = loadComplaintRecords;
+</script>
+</body>
+</html>

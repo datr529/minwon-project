@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>민원 내용 입력</title>
+    <style>
+    body {
+        font-family: 'Noto Sans KR', sans-serif;
+        background-color: #f4f7fc;
+        color: #333;
+        line-height: 1.6;
+        padding: 40px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+    }
+
+    body::before {
+        content: "민원 접수 시스템";
+        display: block;
+        background-color: #1d428a;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 30px;
+        width: 100%;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 50px;
+        text-align: center;
+    }
+
+    form {
+        background-color: #fff;
+        max-width: 600px;
+        width: 100%;
+        margin: 20px auto;
+        padding: 40px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        text-align: center;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #1d428a;
+        text-align: left;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+        background-color: #fafafa;
+    }
+
+    button {
+        background-color: #1d428a;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        font-size: 15px;
+        cursor: pointer;
+        margin: 5px;
+        transition: background-color 0.2s;
+    }
+
+    button:hover {
+        background-color: #0f2a5f;
+    }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>민원 내용 입력</h1>
+
+    <form id="complaintForm">
+        <label for="complaint">민원 내용:</label>
+        <textarea id="complaint" name="complaint" rows="5" cols="50" required></textarea>
+        <button type="submit">제출</button>
+        <button type="button" class="back-button" onclick="goBack()">이전</button>
+        <button type="button" class="home-button" onclick="goHome()">처음으로</button>
+    </form>
+</div>
+
+<script>
+function loadComplaintInfo() {
+    try {
+        let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
+
+        if (complaints.length > 0) {
+            let latestComplaint = complaints[complaints.length - 1];
+            document.getElementById("displayName").textContent = latestComplaint.name || "정보 없음";
+            document.getElementById("displayPhone").textContent = latestComplaint.phone || "정보 없음";
+            document.getElementById("displayAddress").textContent = latestComplaint.address || "정보 없음";
+        } else {
+            document.getElementById("displayName").textContent = "정보 없음";
+            document.getElementById("displayPhone").textContent = "정보 없음";
+            document.getElementById("displayAddress").textContent = "정보 없음";
+        }
+    } catch (error) {
+        console.error("로컬 스토리지 데이터 오류:", error);
+        document.getElementById("displayName").textContent = "정보 없음";
+        document.getElementById("displayPhone").textContent = "정보 없음";
+        document.getElementById("displayAddress").textContent = "정보 없음";
+    }
+}
+
+window.onload = loadComplaintInfo;
+
+function goBack() {
+    window.location.href = "complaint_info.html";
+}
+
+function goHome() {
+    window.location.href = "index.html";
+}
+
+document.getElementById("complaintForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    let complaintText = document.getElementById("complaint").value.trim();
+    if (!complaintText) {
+        alert("민원 내용을 입력해주세요.");
+        return;
+    }
+
+    try {
+        let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
+
+        if (complaints.length > 0) {
+            let latestComplaint = complaints[complaints.length - 1];
+            latestComplaint.complaint = complaintText;
+            complaints[complaints.length - 1] = latestComplaint;
+            localStorage.setItem("complaints", JSON.stringify(complaints));
+        }
+    } catch (error) {
+        console.error("민원 저장 오류:", error);
+    }
+
+    let newWindow = window.open("", "_blank", "width=400,height=300");
+
+    if (newWindow) {
+        newWindow.document.write(`
+            <h2>제출되었습니다.</h2>
+            <p>소중한 의견 감사합니다.</p>
+            <button onclick="closeAllAndGoHome()">닫기</button>
+            <script>
+                function closeAllAndGoHome() {
+                    window.opener.location.href = "index.html";
+                    window.opener.focus();
+                    window.close();
+                }
+            <\/script>
+        `);
+    } else {
+        alert("팝업이 차단되었습니다. 팝업 차단을 해제하고 다시 시도해주세요.");
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>민원 접수자 정보 입력</title>
+    <style>
+    body {
+        font-family: 'Noto Sans KR', sans-serif;
+        background-color: #f4f7fc;
+        color: #333;
+        line-height: 1.6;
+        padding: 40px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+    }
+
+    body::before {
+        content: "민원 접수 시스템";
+        display: block;
+        background-color: #1d428a;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 30px;
+        width: 100%;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding-top: 50px;
+        text-align: center;
+        width: 100%;
+    }
+
+    form {
+        background-color: #fff;
+        max-width: 600px;
+        width: 100%;
+        margin: 20px auto;
+        padding: 40px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        text-align: center;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #1d428a;
+        text-align: left;
+    }
+
+    input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+        background-color: #fafafa;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    button {
+        background-color: #1d428a;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    button:hover {
+        background-color: #0f2a5f;
+    }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>민원 접수자 정보 입력</h1>
+
+    <form id="infoForm">
+        <label for="name">이름:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="phone">연락처:</label>
+        <input type="text" id="phone" name="phone" placeholder="예: 01012341234" required>
+
+        <label for="address">민원 발생 지역 도로명 주소:</label>
+        <input type="text" id="address" name="address" placeholder="예: 창원시 의창구 중앙대로 151" required>
+
+        <div class="button-group">
+            <button type="button" onclick="saveAndNext()">다음</button>
+            <button type="button" onclick="goBack()">이전</button>
+        </div>
+    </form>
+</div>
+
+<script>
+function saveAndNext() {
+    let name = document.getElementById("name").value;
+    let phone = document.getElementById("phone").value;
+    let address = document.getElementById("address").value;
+
+    if (name && phone && address) {
+        let storedRecords = JSON.parse(localStorage.getItem("complaintRecords")) || [];
+        storedRecords.push({ name, phone, address });
+        localStorage.setItem("complaintRecords", JSON.stringify(storedRecords));
+        window.location.href = "complaint_form.html";
+    } else {
+        alert("모든 정보를 입력해주세요!");
+    }
+}
+
+function goBack() {
+    window.location.href = "index.html";
+    window.close();
+}
+</script>
+</body>
+</html>
